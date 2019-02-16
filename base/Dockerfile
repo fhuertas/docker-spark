@@ -1,7 +1,6 @@
-FROM java:8
+FROM java:openjdk-8-jre
 
-MAINTAINER Erika Pauwels <erika.pauwels@tenforce.com>
-MAINTAINER Gezim Sejdiu <g.sejdiu@gmail.com>
+MAINTAINER Francisco Huertas <pacohuertas@gmail.com>
 
 ENV ENABLE_INIT_DAEMON true
 ENV INIT_DAEMON_BASE_URI http://identifier/init-daemon
@@ -9,6 +8,8 @@ ENV INIT_DAEMON_STEP spark_master_init
 
 ENV SPARK_VERSION=2.4.0
 ENV HADOOP_VERSION=2.7
+ENV SPARK_HOME=/spark
+ENV PATH="/spark/bin:${PATH}"
 
 COPY wait-for-step.sh /
 COPY execute-step.sh /
@@ -20,20 +21,21 @@ ADD https://raw.githubusercontent.com/guilhem/apt-get-install/master/apt-get-ins
 RUN chmod +x /usr/bin/apt-get-install
 
 RUN apt-get-install -y curl \
+          python  \
+          python3  \
+          python3-setuptools \
+          python3-pip \
       && chmod +x *.sh \
       && wget http://apache.mirror.iphh.net/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz \
       && tar -xvzf spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz \
       && mv spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION} spark \
       && rm spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz \
-      #&& cd /css \
-      #&& jar uf /spark/jars/spark-core_2.11-${SPARK_VERSION}.jar org/apache/spark/ui/static/timeline-view.css \
-      && cd /
-
-RUN apt-get-install -y python3 python3-setuptools python3-pip
-
-#Give permission to execute scripts
-RUN chmod +x /wait-for-step.sh && chmod +x /execute-step.sh && chmod +x /finish-step.sh
+      && rm -rf /var/lib/apt/lists/* \
+      && chmod +x /wait-for-step.sh && chmod +x /execute-step.sh && chmod +x /finish-step.sh \
+      && sed -e 's/log4j.rootCategory.*/log4j.rootCategory=WARN, console/' /spark/conf/log4j.properties.template > /spark/conf/log4j.properties
 
 # Fix the value of PYTHONHASHSEED
 # Note: this is needed when you use Python 3.3 or greater
 ENV PYTHONHASHSEED 1
+
+RUN
