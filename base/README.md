@@ -5,5 +5,5 @@ The Spark base image serves as a base image for the Spark master, Spark worker a
 To generate run
 
 ```
-docker build . -t fhuertas/spark-base:2.4.0-hadoop2.7
+docker build . --build-arg SPARK_VERSION=2.4.3 --build-arg HADOOP_VERSION=2.7 -t fhuertas/spark-base:2.4.0-hadoop2.7
 ```

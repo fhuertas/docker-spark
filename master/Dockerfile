@@ -1,4 +1,7 @@
-FROM fhuertas/spark-base:2.4.0-hadoop2.7
+ARG SPARK_VERSION
+ARG HADOOP_VERSION=2.7
+
+FROM fhuertas/spark-base:${SPARK_VERSION}-hadoop${HADOOP_VERSION}
 
 MAINTAINER Francisco Huertas <pacohuertas@gmail.com>
 
