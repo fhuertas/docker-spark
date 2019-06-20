@@ -10,5 +10,5 @@ docker build base/ --build-arg SPARK_VERSION=$SPARK_VERSION --build-arg HADOOP_V
 # Worker
 docker build worker/ --build-arg SPARK_VERSION=$SPARK_VERSION --build-arg HADOOP_VERSION=${HADOOP_VERSION} -t fhuertas/spark-worker:${SPARK_VERSION}-hadoop${HADOOP_VERSION}
 # Master
-docker build worker/ --build-arg SPARK_VERSION=$SPARK_VERSION --build-arg HADOOP_VERSION=${HADOOP_VERSION} -t fhuertas/spark-master:${SPARK_VERSION}-hadoop${HADOOP_VERSION}
+docker build master/ --build-arg SPARK_VERSION=$SPARK_VERSION --build-arg HADOOP_VERSION=${HADOOP_VERSION} -t fhuertas/spark-master:${SPARK_VERSION}-hadoop${HADOOP_VERSION}
 ```

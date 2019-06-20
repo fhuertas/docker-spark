@@ -8,8 +8,10 @@ ENV INIT_DAEMON_STEP spark_master_init
 
 ARG SPARK_VERSION
 ARG HADOOP_VERSION
-ENV SPARK_HOME=/spark
-ENV PATH="/spark/bin:${PATH}"
+ARG PYTHON_VERSION="python3"
+ENV SPARK_HOME=/opt/spark
+ENV PATH="/opt/spark/bin:${PATH}"
+ENV PYSPARK_PYTHON=${PYTHON_VERSION}
 
 COPY wait-for-step.sh /
 COPY execute-step.sh /
@@ -23,12 +25,13 @@ RUN apt-get update; \
           python3-setuptools \
           python3-pip; \
     chmod +x *.sh; \
+    pip3 install ipython; \
     wget https://archive.apache.org/dist/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz; \
     tar -xvzf spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz; \
-    mv spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION} spark; \
+    mv spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION} ${SPARK_HOME}; \
     rm spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz; \
-    mv /spark/conf/log4j.properties.template /spark/conf/log4j.properties; \
-    sed -i 's/log4j.rootCategory.*/log4j.rootCategory=WARN, console/' /spark/conf/log4j.properties; \
+    mv ${SPARK_HOME}/conf/log4j.properties.template ${SPARK_HOME}/conf/log4j.properties; \
+    sed -i 's/log4j.rootCategory.*/log4j.rootCategory=WARN, console/' ${SPARK_HOME}/conf/log4j.properties; \
     rm -rf /var/lib/apt/lists/*; \
     chmod +x /wait-for-step.sh && chmod +x /execute-step.sh && chmod +x /finish-step.sh
 
